@@ -50,3 +50,4 @@
 3. **Jalankan Aplikasi**:
    - Hubungkan perangkat fisik Android (USB Debugging) atau gunakan Android Emulator.
    - Tekan tombol **Run (Shift + F10)**.
+
