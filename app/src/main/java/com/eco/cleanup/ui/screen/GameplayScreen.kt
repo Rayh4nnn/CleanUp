@@ -92,7 +92,7 @@ fun GameplayScreen(
     // Posisi drag item sampah
     var dragOffsetX by remember { mutableFloatStateOf(0f) }
     var dragOffsetY by remember { mutableFloatStateOf(0f) }
-    var itemCenterInRoot by remember { mutableStateOf(Offset.Zero) }
+    var itemRestCenter by remember { mutableStateOf(Offset.Zero) }
 
     BackgroundAsset(assetPath = "background/bg_permainan.png") {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -167,10 +167,10 @@ fun GameplayScreen(
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.95f)
+                    .fillMaxWidth()
                     .align(Alignment.Center)
-                    .offset(y = (-15).dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                    .offset(y = (-10).dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.Bottom
             ) {
                 tongList.forEach { (id, assetPath, label) ->
@@ -183,7 +183,7 @@ fun GameplayScreen(
 
                     Box(
                         modifier = Modifier
-                            .width(100.dp)
+                            .width(105.dp)
                             .height(155.dp)
                             .onGloballyPositioned { coords ->
                                 tongBounds[id] = coords.boundsInRoot()
@@ -214,7 +214,7 @@ fun GameplayScreen(
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 90.dp)
+                            .padding(bottom = 85.dp)
                             .offset {
                                 IntOffset(
                                     dragOffsetX.roundToInt(),
@@ -223,41 +223,41 @@ fun GameplayScreen(
                             }
                             .size(110.dp)
                             .onGloballyPositioned { coords ->
-                                val bounds = coords.boundsInRoot()
-                                itemCenterInRoot = bounds.center
+                                if (dragOffsetX == 0f && dragOffsetY == 0f) {
+                                    itemRestCenter = coords.boundsInRoot().center
+                                }
                             }
                             .pointerInput(sampah.idSampah) {
                                 detectDragGestures(
                                     onDragStart = { /* mulai drag */ },
                                     onDragEnd   = {
-                                        val currentCenter = itemCenterInRoot + Offset(dragOffsetX, dragOffsetY)
+                                        val currentCenter = itemRestCenter + Offset(dragOffsetX, dragOffsetY)
 
-                                        // Deteksi tong sampah yang dituju berdasarkan bounding box masing-masing
-                                        var targetTongId: Int? = null
-                                        var closestDistance = Float.MAX_VALUE
+                                        if (tongBounds.size >= 3) {
+                                            val rect1 = tongBounds[1]
+                                            val rect2 = tongBounds[2]
+                                            val rect3 = tongBounds[3]
 
-                                        for ((id, rect) in tongBounds) {
-                                            // Berikan hit-box toleransi ekstra agar seretan anak-anak mudah masuk
-                                            val hitBox = Rect(
-                                                left   = rect.left - 30f,
-                                                top    = rect.top - 60f,
-                                                right  = rect.right + 30f,
-                                                bottom = rect.bottom + 80f
-                                            )
+                                            if (rect1 != null && rect2 != null && rect3 != null) {
+                                                // Area vertikal tong sampah (dari tutup/lid atas sampai dasar roda)
+                                                val topLimit = minOf(rect1.top, rect2.top, rect3.top) - 100f
+                                                val bottomLimit = maxOf(rect1.bottom, rect2.bottom, rect3.bottom) + 80f
 
-                                            if (hitBox.contains(currentCenter)) {
-                                                val dx = currentCenter.x - rect.center.x
-                                                val dy = currentCenter.y - rect.center.y
-                                                val dist = kotlin.math.hypot(dx, dy)
-                                                if (dist < closestDistance) {
-                                                    closestDistance = dist
-                                                    targetTongId = id
+                                                // Cek apakah sampah di-drag sampai ke ketinggian trotoar / tong
+                                                if (currentCenter.y in topLimit..bottomLimit) {
+                                                    // Deteksi secara presisi berdasarkan posisi horizontal tong terdekat
+                                                    val dist1 = kotlin.math.abs(currentCenter.x - rect1.center.x)
+                                                    val dist2 = kotlin.math.abs(currentCenter.x - rect2.center.x)
+                                                    val dist3 = kotlin.math.abs(currentCenter.x - rect3.center.x)
+
+                                                    val chosenTongId = when {
+                                                        dist1 <= dist2 && dist1 <= dist3 -> 1
+                                                        dist3 <= dist1 && dist3 <= dist2 -> 3
+                                                        else -> 2
+                                                    }
+                                                    viewModel.onItemDropped(chosenTongId)
                                                 }
                                             }
-                                        }
-
-                                        if (targetTongId != null) {
-                                            viewModel.onItemDropped(targetTongId)
                                         }
 
                                         // Reset posisi drag kembali ke aspal jalan
