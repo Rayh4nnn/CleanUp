@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -85,8 +86,8 @@ fun GameplayScreen(
         }
     }
 
-    // Koordinat bounding box untuk ketiga tong sampah (tempat_sampah.svg)
-    var tongBounds by remember { mutableStateOf<Rect?>(null) }
+    // Koordinat bounding box untuk masing-masing 3 tong sampah
+    val tongBounds = remember { mutableStateMapOf<Int, Rect>() }
 
     // Posisi drag item sampah
     var dragOffsetX by remember { mutableFloatStateOf(0f) }
@@ -154,31 +155,49 @@ fun GameplayScreen(
                 }
             }
 
-            // ── 3. Tiga Tong Sampah Besar (Di Trotoar) ─────────────────
-            // Berada di tengah (trotoar), menggantikan 3 kotak kecil sebelumnya
-            val tongPainter = rememberAsyncImagePainter(
-                model       = ImageRequest.Builder(context)
-                    .data(AssetHelper.assetUri("item/tempat_sampah.svg"))
-                    .build(),
-                imageLoader = svgLoader
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(0.92f)
-                    .height(175.dp)
-                    .align(Alignment.Center)
-                    .offset(y = (-20).dp)
-                    .onGloballyPositioned { coords ->
-                        tongBounds = coords.boundsInRoot()
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter            = tongPainter,
-                    contentDescription = "Tempat Sampah (Organik, Anorganik, B3)",
-                    modifier           = Modifier.fillMaxSize(),
-                    contentScale       = ContentScale.Fit
+            // ── 3. Tiga Tong Sampah Terpisah di Trotoar ───────────────
+            // Organik (Hijau: 1), Anorganik (Biru: 2), B3 (Merah: 3)
+            val tongList = remember {
+                listOf(
+                    Triple(1, "item/tempat_sampah_hijau.svg", "Organik"),
+                    Triple(2, "item/tempat_sampah_biru.svg",  "Anorganik"),
+                    Triple(3, "item/tempat_sampah_merah.svg", "B3")
                 )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .align(Alignment.Center)
+                    .offset(y = (-15).dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                tongList.forEach { (id, assetPath, label) ->
+                    val tongPainter = rememberAsyncImagePainter(
+                        model       = ImageRequest.Builder(context)
+                            .data(AssetHelper.assetUri(assetPath))
+                            .build(),
+                        imageLoader = svgLoader
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .width(100.dp)
+                            .height(155.dp)
+                            .onGloballyPositioned { coords ->
+                                tongBounds[id] = coords.boundsInRoot()
+                            },
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        Image(
+                            painter            = tongPainter,
+                            contentDescription = "Tempat Sampah $label",
+                            modifier           = Modifier.fillMaxSize(),
+                            contentScale       = ContentScale.Fit
+                        )
+                    }
+                }
             }
 
             // ── 4. Item Sampah (Di Bawah pada Aspal Jalan) ─────────────
@@ -211,32 +230,36 @@ fun GameplayScreen(
                                 detectDragGestures(
                                     onDragStart = { /* mulai drag */ },
                                     onDragEnd   = {
-                                        val bounds = tongBounds
-                                        if (bounds != null) {
-                                            val currentCenter = itemCenterInRoot + Offset(dragOffsetX, dragOffsetY)
+                                        val currentCenter = itemCenterInRoot + Offset(dragOffsetX, dragOffsetY)
 
-                                            // Cek apakah item di-drag sampai ke area tong sampah
-                                            val tolerance = 80f
-                                            val reachedY = currentCenter.y <= (bounds.bottom + tolerance) &&
-                                                    currentCenter.y >= (bounds.top - tolerance)
+                                        // Deteksi tong sampah yang dituju berdasarkan bounding box masing-masing
+                                        var targetTongId: Int? = null
+                                        var closestDistance = Float.MAX_VALUE
 
-                                            val reachedX = currentCenter.x >= (bounds.left - tolerance) &&
-                                                    currentCenter.x <= (bounds.right + tolerance)
+                                        for ((id, rect) in tongBounds) {
+                                            // Berikan hit-box toleransi ekstra agar seretan anak-anak mudah masuk
+                                            val hitBox = Rect(
+                                                left   = rect.left - 30f,
+                                                top    = rect.top - 60f,
+                                                right  = rect.right + 30f,
+                                                bottom = rect.bottom + 80f
+                                            )
 
-                                            if (reachedY && reachedX) {
-                                                // Bagi 3 tong secara horizontal:
-                                                // Kiri  = Organik (1)
-                                                // Tengah = Anorganik (2)
-                                                // Kanan = B3 (3)
-                                                val third = bounds.width / 3f
-                                                val droppedTongId = when {
-                                                    currentCenter.x < bounds.left + third -> 1
-                                                    currentCenter.x > bounds.left + 2f * third -> 3
-                                                    else -> 2
+                                            if (hitBox.contains(currentCenter)) {
+                                                val dx = currentCenter.x - rect.center.x
+                                                val dy = currentCenter.y - rect.center.y
+                                                val dist = kotlin.math.hypot(dx, dy)
+                                                if (dist < closestDistance) {
+                                                    closestDistance = dist
+                                                    targetTongId = id
                                                 }
-                                                viewModel.onItemDropped(droppedTongId)
                                             }
                                         }
+
+                                        if (targetTongId != null) {
+                                            viewModel.onItemDropped(targetTongId)
+                                        }
+
                                         // Reset posisi drag kembali ke aspal jalan
                                         dragOffsetX = 0f
                                         dragOffsetY = 0f
