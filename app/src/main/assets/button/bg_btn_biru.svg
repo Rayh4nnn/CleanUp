@@ -1,0 +1,27 @@
+<svg width="252" height="63" viewBox="0 0 252 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_148_531" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="252" height="63">
+<path d="M30.3305 0.705259H221.491C237.852 0.705259 251.116 13.9689 251.116 30.3305V32.4905C251.116 48.8521 237.852 62.1158 221.491 62.1158H30.3305C13.9689 62.1158 0.705259 48.8521 0.705259 32.4905V30.3305C0.705259 13.9689 13.9689 0.705259 30.3305 0.705259Z" fill="#D9D9D9" stroke-width="1.41053" stroke="#007ECD"/>
+</mask>
+<g mask="url(#mask0_148_531)">
+<path d="M1.41052 0.515015H250.411V61.4105H1.41052V0.515015Z" fill="#007ECD"/>
+<rect x="1.41052" y="1.41052" width="249" height="52.8358" rx="26.4179" fill="url(#paint0_linear_148_531)"/>
+<path d="M27.8284 1.05789H223.993C238.778 1.05789 250.763 13.0435 250.763 27.8284C250.763 42.6134 238.778 54.599 223.993 54.599H27.8284C13.0435 54.599 1.05789 42.6134 1.05789 27.8284C1.05789 13.0435 13.0435 1.05789 27.8284 1.05789Z" stroke-width="0.705263" stroke="url(#paint1_linear_148_531)"/>
+<ellipse cx="4.58441" cy="2.84946" rx="4.58441" ry="2.84946" transform="matrix(0.712199 0.701978 -0.65625 0.754544 235.883 6.64685)" fill="white" fill-opacity="0.9"/>
+<ellipse cx="3.14531" cy="1.78784" rx="3.14531" ry="1.78784" transform="matrix(0.245279 0.969453 -0.961266 0.275622 243.886 16.7522)" fill="white" fill-opacity="0.9"/>
+<ellipse cx="245.422" cy="26.4174" rx="1.45477" ry="0.819928" transform="rotate(90 245.422 26.4174)" fill="white" fill-opacity="0.9"/>
+<ellipse cx="4.58441" cy="2.84946" rx="4.58441" ry="2.84946" transform="matrix(-0.712199 -0.701978 0.65625 -0.754544 17.0556 48.0828)" fill="#0063A1"/>
+<ellipse cx="3.14531" cy="1.78784" rx="3.14531" ry="1.78784" transform="matrix(-0.245279 -0.969453 0.961266 -0.275622 9.05246 37.9775)" fill="#0063A1"/>
+<ellipse cx="7.5168" cy="28.3122" rx="1.45477" ry="0.819928" transform="rotate(-90 7.5168 28.3122)" fill="#0063A1"/>
+<path d="M30.3305 0.705259H221.491C237.852 0.705259 251.116 13.9689 251.116 30.3305V32.4905C251.116 48.8521 237.852 62.1158 221.491 62.1158H30.3305C13.9689 62.1158 0.705259 48.8521 0.705259 32.4905V30.3305C0.705259 13.9689 13.9689 0.705259 30.3305 0.705259Z" stroke-width="1.41053" stroke="#0063A1"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_148_531" x1="125.911" y1="1.41053" x2="125.911" y2="54.2463" gradientUnits="userSpaceOnUse">
+<stop stop-color="#00BBFF"/>
+<stop offset="1" stop-color="#007ECD"/>
+</linearGradient>
+<linearGradient id="paint1_linear_148_531" x1="125.911" y1="1.41052" x2="125.911" y2="54.2463" gradientUnits="userSpaceOnUse">
+<stop stop-color="#132738"/>
+<stop offset="1" stop-color="#00BBFF"/>
+</linearGradient>
+</defs>
+</svg>
