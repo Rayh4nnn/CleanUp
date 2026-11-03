@@ -9,6 +9,9 @@ object DatabaseSeeder {
     suspend fun seedIfEmpty(db: CleanUpDatabase) {
         if (db.kategoriDao().count() == 0) {
             seed(db)
+        } else {
+            // Pastikan level terisi lengkap (Level 1, 2, 3) jika database sudah terbuat
+            seedLevel(db)
         }
     }
 
@@ -263,6 +266,13 @@ object DatabaseSeeder {
                 LevelEntity(
                     idLevel       = 2,
                     namaLevel     = "Sedang",
+                    statusTerbuka = false,
+                    bintang       = 0,
+                    skorTertinggi = 0
+                ),
+                LevelEntity(
+                    idLevel       = 3,
+                    namaLevel     = "Susah",
                     statusTerbuka = false,
                     bintang       = 0,
                     skorTertinggi = 0

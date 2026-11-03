@@ -19,6 +19,7 @@ class GameRepository(private val db: CleanUpDatabase) {
         return when (levelId) {
             1 -> db.sampahDao().getRandomSampahByKategori(listOf(1, 2, 3), limit = 5)
             2 -> db.sampahDao().getRandomSampahByKategori(listOf(1, 2, 3), limit = 7)
+            3 -> db.sampahDao().getRandomSampahByKategori(listOf(1, 2, 3), limit = 10)
             else -> db.sampahDao().getRandomSampah(5)
         }
     }
