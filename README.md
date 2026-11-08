@@ -7,9 +7,9 @@
 ##  Fitur & Mekanik Permainan
 
 1. **Pemilahan 3 Kategori Sampah**:
-   - 🟢 **Organik** (Hijau): Sisa makanan, daun, kulit buah, dll.
-   - 🔵 **Anorganik** (Biru): Botol plastik, kaca, kaleng, kardus, dll.
-   - 🔴 **B3 / Berbahaya & Beracun** (Merah): Baterai, lampu, obat, limbah elektronik, dll.
+   -  **Organik** (Hijau): Sisa makanan, daun, kulit buah, dll.
+   -  **Anorganik** (Biru): Botol plastik, kaca, kaleng, kardus, dll.
+   -  **B3 / Berbahaya & Beracun** (Merah): Baterai, lampu, obat, limbah elektronik, dll.
 2. **Interaksi Drag-and-Drop**: Pemain membaca edukasi mengenai benda sampah lalu menyeretnya langsung ke tong sampah yang sesuai.
 3. **Sistem Gamifikasi**:
    - Poin (+10 setiap jawaban benar).
