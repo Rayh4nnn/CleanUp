@@ -73,8 +73,7 @@ class GameplayViewModel(
         val sampah = st.currentSampah ?: return
 
         viewModelScope.launch {
-            val efekEnabled = settings.efekSuara.first()
-            AudioManager.playLempar(context, efekEnabled)
+            AudioManager.playLempar(context)
 
             if (sampah.idKategori == idKategoriTong) {
                 // ✅ Benar (+10)
@@ -87,7 +86,7 @@ class GameplayViewModel(
                 // ❌ Salah (kurangi nyawa)
                 val newNyawa = st.nyawa - 1
                 if (newNyawa <= 0) {
-                    AudioManager.playKalah(context, efekEnabled)
+                    AudioManager.playKalah(context)
                     _state.value = st.copy(
                         nyawa          = 0,
                         showSalahModal = true,
@@ -116,8 +115,7 @@ class GameplayViewModel(
         if (nextIndex >= st.sampahList.size) {
             // Semua item level ini selesai (Menang!)
             viewModelScope.launch {
-                val efekEnabled = settings.efekSuara.first()
-                AudioManager.playMenang(context, efekEnabled)
+                AudioManager.playMenang(context)
                 val bintang = hitungBintang(st.nyawa)
                 repo.saveHasil(levelId, bintang, st.skor)
             }

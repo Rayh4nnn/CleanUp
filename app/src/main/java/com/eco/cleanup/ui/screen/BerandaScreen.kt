@@ -35,7 +35,7 @@ fun BerandaScreen(
 
     // Mulai backsound di Beranda
     DisposableEffect(Unit) {
-        AudioManager.startBacksound(context, enabled = true)
+        AudioManager.startBacksound(context)
         onDispose { /* biarkan terus */ }
     }
 

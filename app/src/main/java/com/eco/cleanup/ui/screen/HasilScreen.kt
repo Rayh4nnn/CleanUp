@@ -65,7 +65,7 @@ fun HasilScreen(
 
                     // Judul
                     Text(
-                        text       = if (state.isWin) "LEVEL SELESAI! 🎉" else "LEVEL GAGAL 😞",
+                        text       = if (state.isWin) "LEVEL SELESAI! " else "LEVEL GAGAL ",
                         fontFamily = FredokaFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize   = 26.sp,

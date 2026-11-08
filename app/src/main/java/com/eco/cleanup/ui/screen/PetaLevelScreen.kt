@@ -1,5 +1,6 @@
 package com.eco.cleanup.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,11 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +57,8 @@ fun PetaLevelScreen(
     onBack          : () -> Unit
 ) {
     val levels by viewModel.levels.collectAsState()
+    val context = LocalContext.current
+    val svgLoader = remember { svgImageLoader(context) }
 
     // Level configuration yang mengikuti alur jalan berliku (S-curve) di background
     // fractionX dan fractionY menentukan posisi tepat di atas jalan
@@ -83,22 +89,25 @@ fun PetaLevelScreen(
                     .padding(top = 32.dp, start = 18.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Tombol Back bulat hijau
+                // Tombol Back bulat SVG dari Figma (ic_kembali.svg)
+                val backPainter = rememberAsyncImagePainter(
+                    model       = ImageRequest.Builder(context)
+                        .data(AssetHelper.assetUri("icon/ic_kembali.svg"))
+                        .build(),
+                    imageLoader = svgLoader
+                )
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(46.dp)
                         .clip(CircleShape)
-                        .background(BtnHijau)
-                        .border(2.dp, Color.White, CircleShape)
                         .clickable { onBack() },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text       = "←",
-                        fontFamily = FredokaFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize   = 24.sp,
-                        color      = Color.White
+                    Image(
+                        painter            = backPainter,
+                        contentDescription = "Kembali",
+                        modifier           = Modifier.fillMaxSize(),
+                        contentScale       = ContentScale.Fit
                     )
                 }
 
@@ -132,8 +141,8 @@ fun PetaLevelScreen(
                         skorTertinggi = 0
                     )
 
-                val nodeWidth = 92.dp
-                val nodeHeight = 125.dp
+                val nodeWidth = 96.dp
+                val nodeHeight = 130.dp
 
                 Box(
                     modifier = Modifier
@@ -141,8 +150,8 @@ fun PetaLevelScreen(
                             x = screenWidth * config.fractionX - (nodeWidth / 2),
                             y = screenHeight * config.fractionY - (nodeHeight / 2)
                         )
-                        .size(width = nodeWidth, height = nodeHeight),
-                    contentAlignment = Alignment.Center
+                        .width(nodeWidth),
+                    contentAlignment = Alignment.TopCenter
                 ) {
                     LevelNodeOnRoad(
                         level           = levelData,
@@ -188,75 +197,67 @@ private fun LevelNodeOnRoad(
             !level.statusTerbuka   -> "icon/ic_level_gembok.svg"
             level.idLevel == 1     -> "icon/ic_level_1.svg"
             level.idLevel == 2     -> "icon/ic_level_2.svg"
-            else                   -> null
+            level.idLevel == 3     -> "icon/ic_level_3.svg"
+            else                   -> "icon/ic_level_gembok.svg"
         }
 
         val nodeSize = 78.dp
 
-        if (iconPath != null) {
-            val painter = rememberAsyncImagePainter(
-                model       = ImageRequest.Builder(context)
-                    .data(AssetHelper.assetUri(iconPath))
-                    .build(),
-                imageLoader = svgLoader
+        val painter = rememberAsyncImagePainter(
+            model       = ImageRequest.Builder(context)
+                .data(AssetHelper.assetUri(iconPath))
+                .build(),
+            imageLoader = svgLoader
+        )
+        Box(
+            modifier = Modifier
+                .size(nodeSize)
+                .clickable(enabled = level.statusTerbuka) {
+                    onLevelSelected(level.idLevel)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter            = painter,
+                contentDescription = "Level ${level.idLevel}",
+                modifier           = Modifier.fillMaxSize(),
+                contentScale       = ContentScale.Fit
             )
-            Box(
-                modifier = Modifier
-                    .size(nodeSize)
-                    .clickable(enabled = level.statusTerbuka) {
-                        onLevelSelected(level.idLevel)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter            = painter,
-                    contentDescription = "Level ${level.idLevel}",
-                    modifier           = Modifier.fillMaxSize(),
-                    contentScale       = ContentScale.Fit
-                )
-            }
-        } else {
-            // Level 3 saat terbuka
-            Box(
-                modifier = Modifier
-                    .size(nodeSize)
-                    .clip(CircleShape)
-                    .background(BtnHijau)
-                    .border(4.dp, Color.White, CircleShape)
-                    .clickable(enabled = level.statusTerbuka) {
-                        onLevelSelected(level.idLevel)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text       = "${level.idLevel}",
-                    fontFamily = FredokaFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize   = 32.sp,
-                    color      = Color.White
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(4.dp))
 
         // ── 3. Label Nama Level (Pill Putih di Bawah Lingkaran) ───────
-        Box(
-            modifier = Modifier
-                .background(Color.White, RoundedCornerShape(12.dp))
-                .border(1.5.dp, Color(0xFFE0E0E0), RoundedCornerShape(12.dp))
-                .shadow(2.dp, RoundedCornerShape(12.dp))
-                .padding(horizontal = 14.dp, vertical = 3.dp),
-            contentAlignment = Alignment.Center
+        Surface(
+            shape           = RoundedCornerShape(12.dp),
+            color           = Color.White,
+            shadowElevation = 2.dp,
+            border          = BorderStroke(1.dp, Color(0xFFE2E8F0))
         ) {
-            Text(
-                text       = level.namaLevel,
-                fontFamily = PlusJakartaSansFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize   = 11.5.sp,
-                color      = Color(0xFF333333),
-                textAlign  = TextAlign.Center
-            )
+            Box(
+                modifier         = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text     = level.namaLevel,
+                    style    = TextStyle(
+                        fontFamily    = PlusJakartaSansFamily,
+                        fontWeight    = FontWeight.Bold,
+                        fontSize      = 12.sp,
+                        color         = Color(0xFF2C3E50),
+                        textAlign     = TextAlign.Center,
+                        lineHeight    = 15.sp,
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        ),
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim      = LineHeightStyle.Trim.Both
+                        )
+                    ),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

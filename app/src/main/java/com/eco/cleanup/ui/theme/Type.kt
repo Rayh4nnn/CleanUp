@@ -2,33 +2,25 @@ package com.eco.cleanup.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.eco.cleanup.R
 
-val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs
+// Font lokal 100% offline dari res/font/
+val FredokaFamily = FontFamily(
+    Font(R.font.fredoka, FontWeight.Normal),
+    Font(R.font.fredoka, FontWeight.Medium),
+    Font(R.font.fredoka, FontWeight.SemiBold),
+    Font(R.font.fredoka, FontWeight.Bold)
 )
 
-val FredokaFont = GoogleFont("Fredoka")
-val PlusJakartaSansFont = GoogleFont("Plus Jakarta Sans")
-
-val FredokaFamily = androidx.compose.ui.text.font.FontFamily(
-    Font(googleFont = FredokaFont, fontProvider = provider, weight = FontWeight.Normal),
-    Font(googleFont = FredokaFont, fontProvider = provider, weight = FontWeight.Medium),
-    Font(googleFont = FredokaFont, fontProvider = provider, weight = FontWeight.SemiBold),
-    Font(googleFont = FredokaFont, fontProvider = provider, weight = FontWeight.Bold),
-)
-
-val PlusJakartaSansFamily = androidx.compose.ui.text.font.FontFamily(
-    Font(googleFont = PlusJakartaSansFont, fontProvider = provider, weight = FontWeight.Normal),
-    Font(googleFont = PlusJakartaSansFont, fontProvider = provider, weight = FontWeight.Medium),
-    Font(googleFont = PlusJakartaSansFont, fontProvider = provider, weight = FontWeight.SemiBold),
-    Font(googleFont = PlusJakartaSansFont, fontProvider = provider, weight = FontWeight.Bold),
+val PlusJakartaSansFamily = FontFamily(
+    Font(R.font.plus_jakarta_sans, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans, FontWeight.SemiBold),
+    Font(R.font.plus_jakarta_sans, FontWeight.Bold)
 )
 
 val Typography = Typography(

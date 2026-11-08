@@ -30,7 +30,10 @@ class PengaturanViewModel(
     }
 
     fun setEfekSuara(enabled: Boolean) {
-        viewModelScope.launch { settings.setEfekSuara(enabled) }
+        viewModelScope.launch {
+            settings.setEfekSuara(enabled)
+            AudioManager.setSfxEnabled(enabled)
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +48,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -133,25 +137,35 @@ fun GameplayScreen(
 
             // ── 2. Card Edukasi Teks (Di atas trotoar) ─────────────────
             state.currentSampah?.let { sampah ->
-                Box(
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 80.dp, start = 20.dp, end = 20.dp)
-                        .background(Color.White, RoundedCornerShape(16.dp))
-                        .border(2.dp, Color(0xFFE8E8E8), RoundedCornerShape(16.dp))
-                        .shadow(4.dp, RoundedCornerShape(16.dp))
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    contentAlignment = Alignment.Center
+                        .padding(top = 80.dp, start = 20.dp, end = 20.dp),
+                    shape = RoundedCornerShape(18.dp),
+                    color = Color.White,
+                    shadowElevation = 2.dp
                 ) {
-                    Text(
-                        text       = sampah.teksEdukasi,
-                        fontFamily = PlusJakartaSansFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize   = 13.sp,
-                        color      = Color(0xFF333333),
-                        textAlign  = TextAlign.Center,
-                        lineHeight = 18.sp
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp, vertical = 14.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text       = sampah.teksEdukasi,
+                            style      = TextStyle(
+                                fontFamily    = PlusJakartaSansFamily,
+                                fontWeight    = FontWeight.Bold,
+                                fontSize      = 13.sp,
+                                color         = Color(0xFF1E293B),
+                                textAlign     = TextAlign.Center,
+                                lineHeight    = 18.sp,
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            )
+                        )
+                    }
                 }
             }
 
@@ -358,71 +372,90 @@ private fun SuccessModal(
             .background(Color.Black.copy(alpha = 0.45f)),
         contentAlignment = Alignment.Center
     ) {
-        // Kartu biru muda #C8F0FF persis seperti di Figma
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.86f)
-                .background(Color(0xFFC8F0FF), RoundedCornerShape(22.dp))
-                .border(3.dp, Color.White, RoundedCornerShape(22.dp))
-                .shadow(8.dp, RoundedCornerShape(22.dp))
-                .padding(horizontal = 22.dp, vertical = 24.dp)
+        Column(
+            modifier            = Modifier.fillMaxWidth(0.86f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Column(
-                modifier            = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+            // Container Pop-up dengan Ikon Bintang +10 di bagian atas yang menimpa tepi
+            Box(
+                modifier         = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.TopCenter
             ) {
-                // Badge Skor +10 ⭐
-                Box(
+                // ── Kotak Biru Muda (Single Container Sesuai Figma) ──
+                Surface(
                     modifier = Modifier
-                        .background(SkorKuning, RoundedCornerShape(14.dp))
-                        .border(2.dp, Color.White, RoundedCornerShape(14.dp))
-                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                        .fillMaxWidth()
+                        .padding(top = 28.dp),
+                    shape           = RoundedCornerShape(22.dp),
+                    color           = Color(0xFFC8F0FF),
+                    shadowElevation = 4.dp
                 ) {
-                    Text(
-                        text       = "+10 ⭐",
-                        fontFamily = FredokaFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize   = 28.sp,
-                        color      = Color.White
-                    )
+                    Column(
+                        modifier            = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp, top = 38.dp, bottom = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Teks Edukasi (Bold, Center)
+                        Text(
+                            text       = sampah.teksEdukasi,
+                            style      = TextStyle(
+                                fontFamily    = PlusJakartaSansFamily,
+                                fontWeight    = FontWeight.Bold,
+                                fontSize      = 13.sp,
+                                color         = Color(0xFF1E293B),
+                                textAlign     = TextAlign.Center,
+                                lineHeight    = 18.sp,
+                                platformStyle = PlatformTextStyle(
+                                    includeFontPadding = false
+                                )
+                            )
+                        )
+
+                        // Ilustrasi Item Sampah
+                        val itemPainter = rememberAsyncImagePainter(
+                            model       = ImageRequest.Builder(context)
+                                .data(AssetHelper.assetUri(sampah.asetGambar))
+                                .build(),
+                            imageLoader = svgLoader
+                        )
+                        Image(
+                            painter            = itemPainter,
+                            contentDescription = sampah.namaSampah,
+                            modifier           = Modifier.size(110.dp),
+                            contentScale       = ContentScale.Fit
+                        )
+                    }
                 }
 
-                // Teks Edukasi
-                Text(
-                    text       = sampah.teksEdukasi,
-                    fontFamily = PlusJakartaSansFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize   = 12.5.sp,
-                    color      = Color(0xFF223344),
-                    textAlign  = TextAlign.Center,
-                    lineHeight = 17.sp
-                )
-
-                // Ilustrasi Item Sampah
-                val painter = rememberAsyncImagePainter(
+                // ── Ikon Bintang +10 (ic_bintang.svg) Menimpa Tepi Atas ──
+                val starPainter = rememberAsyncImagePainter(
                     model       = ImageRequest.Builder(context)
-                        .data(AssetHelper.assetUri(sampah.asetGambar))
+                        .data(AssetHelper.assetUri("icon/ic_bintang.svg"))
                         .build(),
                     imageLoader = svgLoader
                 )
                 Image(
-                    painter            = painter,
-                    contentDescription = sampah.namaSampah,
-                    modifier           = Modifier.size(110.dp),
+                    painter            = starPainter,
+                    contentDescription = "+10",
+                    modifier           = Modifier
+                        .width(135.dp)
+                        .height(74.dp),
                     contentScale       = ContentScale.Fit
                 )
-
-                // Tombol Biru SELANJUTNYA
-                CleanUpButton(
-                    text      = "SELANJUTNYA",
-                    assetPath = "button/bg_btn_biru.svg",
-                    onClick   = onNextClick,
-                    modifier  = Modifier.fillMaxWidth(0.85f),
-                    height    = 48.dp,
-                    fontSize  = 16
-                )
             }
+
+            // ── Tombol Biru SELANJUTNYA Di Luar & Di Bawah Kotak ──
+            CleanUpButton(
+                text      = "SELANJUTNYA",
+                assetPath = "button/bg_btn_biru.svg",
+                onClick   = onNextClick,
+                modifier  = Modifier.fillMaxWidth(0.92f),
+                height    = 50.dp,
+                fontSize  = 16
+            )
         }
     }
 }
@@ -450,59 +483,72 @@ private fun SalahModal(
             .background(Color.Black.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.86f)
-                .background(Color(0xFFFFEEEE), RoundedCornerShape(22.dp))
-                .border(3.dp, BtnMerah, RoundedCornerShape(22.dp))
-                .shadow(8.dp, RoundedCornerShape(22.dp))
-                .padding(horizontal = 22.dp, vertical = 24.dp)
+        Column(
+            modifier            = Modifier.fillMaxWidth(0.86f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            Column(
-                modifier            = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+            Surface(
+                modifier        = Modifier.fillMaxWidth(),
+                shape           = RoundedCornerShape(22.dp),
+                color           = Color(0xFFFFEEEE),
+                border          = BorderStroke(2.dp, BtnMerah),
+                shadowElevation = 4.dp
             ) {
-                Text(
-                    text       = if (isGameOver) "💔 NYAWA HABIS!" else "❌ UPS, SALAH TONG!",
-                    fontFamily = FredokaFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize   = 22.sp,
-                    color      = BtnMerah
-                )
+                Column(
+                    modifier            = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp, vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Text(
+                        text       = if (isGameOver) "💔 NYAWA HABIS!" else "❌ UPS, SALAH TONG!",
+                        fontFamily = FredokaFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize   = 22.sp,
+                        color      = BtnMerah
+                    )
 
-                Text(
-                    text       = "${sampah.namaSampah} seharusnya dimasukkan ke tong $kategoriNama.",
-                    fontFamily = PlusJakartaSansFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize   = 13.sp,
-                    color      = Color(0xFF333333),
-                    textAlign  = TextAlign.Center
-                )
+                    Text(
+                        text       = "${sampah.namaSampah} seharusnya dimasukkan ke tong $kategoriNama.",
+                        style      = TextStyle(
+                            fontFamily    = PlusJakartaSansFamily,
+                            fontWeight    = FontWeight.Bold,
+                            fontSize      = 13.sp,
+                            color         = Color(0xFF333333),
+                            textAlign     = TextAlign.Center,
+                            lineHeight    = 18.sp,
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        )
+                    )
 
-                // Ilustrasi Item Sampah
-                val painter = rememberAsyncImagePainter(
-                    model       = ImageRequest.Builder(context)
-                        .data(AssetHelper.assetUri(sampah.asetGambar))
-                        .build(),
-                    imageLoader = svgLoader
-                )
-                Image(
-                    painter            = painter,
-                    contentDescription = sampah.namaSampah,
-                    modifier           = Modifier.size(90.dp),
-                    contentScale       = ContentScale.Fit
-                )
-
-                CleanUpButton(
-                    text      = if (isGameOver) "LIHAT HASIL" else "SELANJUTNYA",
-                    assetPath = if (isGameOver) "button/bg_btn_merah.svg" else "button/bg_btn_hijau.svg",
-                    onClick   = onNextClick,
-                    modifier  = Modifier.fillMaxWidth(0.85f),
-                    height    = 48.dp,
-                    fontSize  = 16
-                )
+                    // Ilustrasi Item Sampah
+                    val painter = rememberAsyncImagePainter(
+                        model       = ImageRequest.Builder(context)
+                            .data(AssetHelper.assetUri(sampah.asetGambar))
+                            .build(),
+                        imageLoader = svgLoader
+                    )
+                    Image(
+                        painter            = painter,
+                        contentDescription = sampah.namaSampah,
+                        modifier           = Modifier.size(90.dp),
+                        contentScale       = ContentScale.Fit
+                    )
+                }
             }
+
+            CleanUpButton(
+                text      = if (isGameOver) "LIHAT HASIL" else "SELANJUTNYA",
+                assetPath = if (isGameOver) "button/bg_btn_merah.svg" else "button/bg_btn_hijau.svg",
+                onClick   = onNextClick,
+                modifier  = Modifier.fillMaxWidth(0.92f),
+                height    = 50.dp,
+                fontSize  = 16
+            )
         }
     }
 }

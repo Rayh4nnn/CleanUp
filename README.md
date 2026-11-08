@@ -1,10 +1,10 @@
-# ♻️ CleanUp - Permainan Edukasi Memilah Sampah
+#  CleanUp - Permainan Edukasi Memilah Sampah
 
 **CleanUp** adalah aplikasi permainan edukasi berbasis Android yang dirancang untuk melatih kepekaan dan pemahaman anak-anak dalam memilah dan mengklasifikasikan jenis sampah sehari-hari secara interaktif dan menyenangkan.
 
 ---
 
-## 🎮 Fitur & Mekanik Permainan
+##  Fitur & Mekanik Permainan
 
 1. **Pemilahan 3 Kategori Sampah**:
    - 🟢 **Organik** (Hijau): Sisa makanan, daun, kulit buah, dll.
@@ -23,7 +23,7 @@
 
 ---
 
-## 🛠️ Tech Stack & Arsitektur
+##  Tech Stack & Arsitektur
 
 - **Bahasa Pemrograman**: Kotlin
 - **UI Toolkit**: Jetpack Compose (Declarative UI) + Material 3
@@ -37,7 +37,7 @@
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+##  Cara Menjalankan Proyek
 
 1. **Clone repository ini**:
    ```bash
