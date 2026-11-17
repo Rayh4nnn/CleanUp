@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.eco.cleanup.data.local.CleanUpDatabase
 import com.eco.cleanup.data.repository.GameRepository
 import com.eco.cleanup.data.repository.SettingsRepository
+import com.eco.cleanup.ui.screen.AboutScreen
 import com.eco.cleanup.ui.screen.BerandaScreen
 import com.eco.cleanup.ui.screen.GameplayScreen
 import com.eco.cleanup.ui.screen.HasilScreen
@@ -58,7 +59,15 @@ fun CleanUpNavGraph() {
             BerandaScreen(
                 onPlayClick       = { navController.navigate(Screen.PetaLevel.route) },
                 onPanduanClick    = { navController.navigate(Screen.Panduan.route) },
-                onPengaturanClick = { navController.navigate(Screen.Pengaturan.route) }
+                onPengaturanClick = { navController.navigate(Screen.Pengaturan.route) },
+                onAboutClick      = { navController.navigate(Screen.About.route) }
+            )
+        }
+
+        // ── Tentang Kami ──────────────────────────────────────────
+        composable(Screen.About.route) {
+            AboutScreen(
+                onKembali = { navController.popBackStack() }
             )
         }
 

@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     object Beranda      : Screen("beranda")
     object Panduan      : Screen("panduan")
     object Pengaturan   : Screen("pengaturan")
+    object About        : Screen("about")
     object PetaLevel    : Screen("peta_level")
     object Gameplay     : Screen("gameplay/{levelId}") {
         fun createRoute(levelId: Int) = "gameplay/$levelId"

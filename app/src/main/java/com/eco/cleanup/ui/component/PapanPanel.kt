@@ -22,9 +22,10 @@ import com.eco.cleanup.util.svgImageLoader
  */
 @Composable
 fun PapanPanel(
-    assetPath : String = "papan/bg_panel_menu.svg",
-    modifier  : Modifier = Modifier,
-    content   : @Composable () -> Unit
+    assetPath       : String   = "papan/bg_panel_menu.svg",
+    modifier        : Modifier = Modifier,
+    contentModifier : Modifier = Modifier,
+    content         : @Composable () -> Unit
 ) {
     val context     = LocalContext.current
     val imageLoader = svgImageLoader(context)
@@ -45,7 +46,11 @@ fun PapanPanel(
             modifier           = Modifier.fillMaxSize(),
             contentScale       = ContentScale.FillBounds
         )
-        Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 20.dp)
+                .then(contentModifier)
+        ) {
             content()
         }
     }
