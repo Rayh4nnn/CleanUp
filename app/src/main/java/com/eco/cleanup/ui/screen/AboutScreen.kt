@@ -1,5 +1,7 @@
 package com.eco.cleanup.ui.screen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,11 +12,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +49,9 @@ private val anggotaKelompok2 = listOf(
 
 @Composable
 fun AboutScreen(onKembali: () -> Unit) {
+    // -1 = semua item tertutup; selain itu = index nama yang sedang terbuka
+    var expandedIndex by remember { mutableIntStateOf(-1) }
+
     BackgroundAsset(assetPath = "background/bg_beranda.png") {
         Box(
             modifier         = Modifier
@@ -99,8 +110,15 @@ fun AboutScreen(onKembali: () -> Unit) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     anggotaKelompok2.forEachIndexed { index, anggota ->
-                        AnggotaItem(nomor = index + 1, anggota = anggota)
-                        Spacer(modifier = Modifier.height(10.dp))
+                        AnggotaItem(
+                            nomor    = index + 1,
+                            anggota  = anggota,
+                            expanded = expandedIndex == index,
+                            onClick  = {
+                                expandedIndex = if (expandedIndex == index) -1 else index
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -119,20 +137,33 @@ fun AboutScreen(onKembali: () -> Unit) {
 }
 
 @Composable
-private fun AnggotaItem(nomor: Int, anggota: AnggotaKelompok) {
-    Row(
-        modifier              = Modifier.fillMaxWidth(),
-        verticalAlignment     = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+private fun AnggotaItem(
+    nomor    : Int,
+    anggota  : AnggotaKelompok,
+    expanded : Boolean,
+    onClick  : () -> Unit
+) {
+    Column(
+        modifier            = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(vertical = 2.dp, horizontal = 2.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Text(
-            text       = "$nomor.",
-            fontFamily = PlusJakartaSansFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize   = 13.sp,
-            color      = Color.White
-        )
-        Column {
+        Row(
+            modifier              = Modifier.fillMaxWidth(),
+            verticalAlignment     = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text       = "$nomor.",
+                fontFamily = PlusJakartaSansFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize   = 13.sp,
+                color      = Color.White
+            )
             Text(
                 text       = anggota.nama,
                 fontFamily = PlusJakartaSansFamily,
@@ -140,11 +171,15 @@ private fun AnggotaItem(nomor: Int, anggota: AnggotaKelompok) {
                 fontSize   = 13.sp,
                 color      = Color.White
             )
+        }
+
+        if (expanded) {
             Text(
-                text       = anggota.nim,
+                text       = "NIM ${anggota.nim}",
                 fontFamily = PlusJakartaSansFamily,
                 fontSize   = 12.sp,
-                color      = Color.White.copy(alpha = 0.9f)
+                color      = Color.White.copy(alpha = 0.9f),
+                modifier   = Modifier.padding(start = 20.dp)
             )
         }
     }
